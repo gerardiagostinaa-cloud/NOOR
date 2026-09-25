@@ -131,7 +131,7 @@ ready(function(){
     if(sin||n>=MAX){it[i].style.display='none'}else{n++}
   }
 });  
-})();
+
 /* 7) Cartel promo 2x1 en la ficha del producto */
 ready(function(){
   var p=document.querySelector('.producto .product-price-container');
@@ -142,4 +142,5 @@ ready(function(){
   var d=document.createElement('div');d.className='noor-2x1';
   d.innerHTML='🎁 <b>PROMO 2x1:</b> llevás <b>2 lentes</b> por este precio';
   p.parentNode.insertBefore(d,p.nextSibling);
-});
+  });
+})();
