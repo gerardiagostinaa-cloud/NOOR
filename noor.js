@@ -145,9 +145,6 @@ ready(function(){
   });
   /* 8) Cuadro de medidas del armazón */
 ready(function(){
-  var L1='M30 53C60 52 110 52 138 55C136 80 132 100 127 111C122 120 114 122 90 122C62 122 52 121 46 113C37 102 32 82 30 53Z';
-  var L2='M290 53C260 52 210 52 182 55C184 80 188 100 193 111C198 120 206 122 230 122C258 122 268 121 274 113C283 102 288 82 290 53Z';
-  var MA='M20 40Q160 46 300 40L299 52C296 80 290 105 280 118C272 127 260 129 230 129C202 129 192 124 186 112C180 98 178 75 174 62Q167 56 160 56Q153 56 146 62C142 75 140 98 134 112C128 124 118 129 90 129C60 129 48 127 40 118C30 105 24 80 21 52Z';
   var cajas=document.querySelectorAll('.noor-medidas');
   for(var k=0;k<cajas.length;k++){
     var c=cajas[k];
@@ -155,50 +152,45 @@ ready(function(){
     var m=c.textContent.split('|');
     if(m.length<4)continue;
     var F=m[0].trim(),C=m[1].trim(),P=m[2].trim(),T=m[3].trim();
-    function cel(t,v){return '<div class="noor-med-item"><span>'+t+'</span><strong>'+v+' mm</strong></div>'}
-    c.innerHTML='<p class="noor-med-tag">MEDIDAS DEL ARMAZÓN · UNISEX</p>'+
-      '<svg class="noor-med-svg" viewBox="0 0 320 165">'+
-        '<path class="lente" d="'+L1+'"/><path class="lente" d="'+L2+'"/>'+
-        '<path class="marco" d="'+MA+L1+L2+'"/>'+
-        '<ellipse class="remache" cx="29" cy="46.5" rx="4.5" ry="1.6"/>'+
-        '<ellipse class="remache" cx="291" cy="46.5" rx="4.5" ry="1.6"/>'+
-        '<path class="cota" d="M20 26H300M20 20V32M300 20V32"/>'+
-        '<path class="cota" d="M30 142H138M30 136V148M138 136V148"/>'+
-        '<path class="cota" d="M142 142H178M142 136V148M178 136V148"/>'+
-        '<text x="160" y="16">FRENTE '+F+'</text>'+
-        '<text x="84" y="158">CALIBRE '+C+'</text>'+
-        '<text x="160" y="158">'+P+'</text>'+
+    function col(ic,v,t,d){return '<div class="noor-anat-col"><svg viewBox="0 0 60 40">'+ic+'</svg><strong>'+v+' mm</strong><span>'+t+'</span><small>'+d+'</small></div>'}
+    var icL='<path class="osc" d="M8 6C20 5 40 5 52 7C51 18 49 26 46 30C44 33 40 34 30 34C18 34 14 33 12 30C9 25 8 17 8 6Z"/><path class="oro" d="M13 20H47M13 20L17 17M13 20L17 23M47 20L43 17M47 20L43 23"/>';
+    var icP='<path class="osc" d="M2 7H22C22 18 20 27 16 33M58 7H38C38 18 40 27 44 33M22 11Q30 4 38 11"/><path class="oro" d="M23 24H37M23 24L26 21.5M23 24L26 26.5M37 24L34 21.5M37 24L34 26.5"/>';
+    var icT='<path class="osc" d="M4 12L38 13C45 13 50 16 54 22L57 27"/><path class="oro" d="M4 34H56M4 34L8 31M4 34L8 37M56 34L52 31M56 34L52 37"/>';
+    c.innerHTML=
+      '<p class="noor-med-tag">ANATOMÍA DE LAS MEDIDAS · UNISEX</p>'+
+      '<p class="noor-anat-sub">Así vienen grabadas en la parte interna de la patilla</p>'+
+      '<svg class="noor-anat-top" viewBox="0 0 320 70">'+
+        '<path class="pat" d="M6 24L228 26C254 27 274 32 292 46L312 62"/>'+
+        '<rect class="eti" x="112" y="14" width="96" height="22" rx="5"/>'+
+        '<text x="160" y="29">'+C+' □ '+P+' - '+T+'</text>'+
+        '<path class="oro" d="M160 36V64M155 58L160 65L165 58"/>'+
       '</svg>'+
-      '<svg class="noor-med-svg" viewBox="0 0 320 100">'+
-        '<path class="pat" d="M26 16L205 19C228 20 248 25 266 40L290 60"/>'+
-        '<rect class="front" x="16" y="12" width="10" height="56" rx="4"/>'+
-        '<path class="cota" d="M26 76H292M26 70V82M292 70V82"/>'+
-        '<text x="159" y="96">PATILLA '+T+'</text>'+
-      '</svg>'+
-      '<div class="noor-med-grid">'+cel('Frente',F)+cel('Calibre',C)+cel('Puente',P)+cel('Patilla',T)+'</div>'+
-      '<p class="noor-med-nota">Anteojos <b>unisex</b>. Son medidas estándar, pensadas para adaptarse cómodamente a la mayoría de los rostros. Si ya tenés un anteojo que te queda bien, podés comparar: sus medidas suelen estar grabadas en la parte interna de la patilla. Todas las medidas están en milímetros.</p>';
+      '<p class="noor-anat-code"><b>'+C+'</b> <i>□</i> '+P+' <i>-</i> '+T+'</p>'+
+      '<div class="noor-anat-grid">'+
+        col(icL,C,'Ancho del lente','Ancho horizontal de cada cristal.')+
+        col(icP,P,'Ancho del puente','Distancia entre ambos cristales.')+
+        col(icT,T,'Largo de la patilla','Desde la bisagra hasta la punta.')+
+      '</div>'+
+      '<p class="noor-anat-frente">Ancho total del frente: <b>'+F+' mm</b></p>'+
+      '<p class="noor-med-nota">Anteojos <b>unisex</b>. Son medidas estándar, pensadas para adaptarse cómodamente a la mayoría de los rostros. Si ya tenés un anteojo que te queda bien, podés comparar sus medidas con estas. Todas las medidas están en milímetros.</p>';
     c.setAttribute('data-ok','1');
     var el=c.querySelectorAll('svg *');
     for(var i=0;i<el.length;i++){
       var s=el[i].style,cl=el[i].getAttribute('class'),tg=el[i].tagName.toLowerCase();
       function st(p,v){s.setProperty(p,v,'important')}
+      st('stroke-linecap','round');st('stroke-linejoin','round');
       if(tg==='text'){
-        st('fill','#e0990f');st('stroke','none');st('font-size','11px');st('font-weight','700');
+        st('fill','#15151a');st('stroke','none');st('font-size','11px');st('font-weight','700');
         el[i].setAttribute('text-anchor','middle');
-      }else if(cl==='cota'){
-        st('fill','none');st('stroke','#e0990f');st('stroke-width','1.5');
+      }else if(cl==='eti'){
+        st('fill','#fff');st('stroke','#15151a');st('stroke-width','1.2');
       }else if(cl==='pat'){
-        st('fill','none');st('stroke','#15151a');st('stroke-width','7');st('stroke-linecap','round');st('stroke-linejoin','round');
-      }else if(cl==='marco'){
-        st('fill','#15151a');st('stroke','none');st('fill-rule','evenodd');el[i].setAttribute('fill-rule','evenodd');
-      }else if(cl==='lente'){
-        st('fill','#e9eef6');st('stroke','none');
-      }else if(cl==='remache'){
-        st('fill','#cfcfcf');st('stroke','none');
-      }else if(cl==='front'){
-        st('fill','#15151a');st('stroke','none');
+        st('fill','none');st('stroke','#15151a');st('stroke-width','7');
+      }else if(cl==='osc'){
+        st('fill','none');st('stroke','#15151a');st('stroke-width','3');
+      }else if(cl==='oro'){
+        st('fill','none');st('stroke','#e0990f');st('stroke-width','1.6');
       }
     }
   }
 });
-})();
