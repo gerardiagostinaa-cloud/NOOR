@@ -145,6 +145,9 @@ ready(function(){
   });
   /* 8) Cuadro de medidas del armazón */
 ready(function(){
+  var L1='M30 53C60 52 110 52 138 55C136 80 132 100 127 111C122 120 114 122 90 122C62 122 52 121 46 113C37 102 32 82 30 53Z';
+  var L2='M290 53C260 52 210 52 182 55C184 80 188 100 193 111C198 120 206 122 230 122C258 122 268 121 274 113C283 102 288 82 290 53Z';
+  var MA='M20 40Q160 46 300 40L299 52C296 80 290 105 280 118C272 127 260 129 230 129C202 129 192 124 186 112C180 98 178 75 174 62Q167 56 160 56Q153 56 146 62C142 75 140 98 134 112C128 124 118 129 90 129C60 129 48 127 40 118C30 105 24 80 21 52Z';
   var cajas=document.querySelectorAll('.noor-medidas');
   for(var k=0;k<cajas.length;k++){
     var c=cajas[k];
@@ -153,33 +156,47 @@ ready(function(){
     if(m.length<4)continue;
     var F=m[0].trim(),C=m[1].trim(),P=m[2].trim(),T=m[3].trim();
     function cel(t,v){return '<div class="noor-med-item"><span>'+t+'</span><strong>'+v+' mm</strong></div>'}
-    c.innerHTML='<p class="noor-med-tag">MEDIDAS DEL ARMAZÓN</p>'+
-      '<svg class="noor-med-svg" viewBox="0 0 320 150">'+
-        '<path class="arm" d="M30 45L140 45L135 105Q133 112 125 112L45 112Q37 112 35 105Z"/>'+
-        '<path class="arm" d="M180 45L290 45L285 105Q283 112 275 112L195 112Q187 112 185 105Z"/>'+
-        '<path class="arm" d="M140 55Q160 45 180 55"/>'+
-        '<path class="cota" d="M26 30H294M26 24V36M294 24V36"/>'+
-        '<path class="cota" d="M30 126H140M30 120V132M140 120V132"/>'+
-        '<path class="cota" d="M144 126H176M144 120V132M176 120V132"/>'+
-        '<text x="160" y="20">FRENTE '+F+'</text>'+
-        '<text x="85" y="146">CALIBRE '+C+'</text>'+
-        '<text x="160" y="146">'+P+'</text>'+
+    c.innerHTML='<p class="noor-med-tag">MEDIDAS DEL ARMAZÓN · UNISEX</p>'+
+      '<svg class="noor-med-svg" viewBox="0 0 320 165">'+
+        '<path class="lente" d="'+L1+'"/><path class="lente" d="'+L2+'"/>'+
+        '<path class="marco" d="'+MA+L1+L2+'"/>'+
+        '<ellipse class="remache" cx="29" cy="46.5" rx="4.5" ry="1.6"/>'+
+        '<ellipse class="remache" cx="291" cy="46.5" rx="4.5" ry="1.6"/>'+
+        '<path class="cota" d="M20 26H300M20 20V32M300 20V32"/>'+
+        '<path class="cota" d="M30 142H138M30 136V148M138 136V148"/>'+
+        '<path class="cota" d="M142 142H178M142 136V148M178 136V148"/>'+
+        '<text x="160" y="16">FRENTE '+F+'</text>'+
+        '<text x="84" y="158">CALIBRE '+C+'</text>'+
+        '<text x="160" y="158">'+P+'</text>'+
+      '</svg>'+
+      '<svg class="noor-med-svg" viewBox="0 0 320 100">'+
+        '<path class="pat" d="M26 16L205 19C228 20 248 25 266 40L290 60"/>'+
+        '<rect class="front" x="16" y="12" width="10" height="56" rx="4"/>'+
+        '<path class="cota" d="M26 76H292M26 70V82M292 70V82"/>'+
+        '<text x="159" y="96">PATILLA '+T+'</text>'+
       '</svg>'+
       '<div class="noor-med-grid">'+cel('Frente',F)+cel('Calibre',C)+cel('Puente',P)+cel('Patilla',T)+'</div>'+
-      '<p class="noor-med-nota">Medidas en milímetros. Podés compararlas con las de un anteojo que ya uses: suelen estar grabadas en la parte interna de la patilla.</p>';
+      '<p class="noor-med-nota">Anteojos <b>unisex</b>. Son medidas estándar, pensadas para adaptarse cómodamente a la mayoría de los rostros. Si ya tenés un anteojo que te queda bien, podés comparar: sus medidas suelen estar grabadas en la parte interna de la patilla. Todas las medidas están en milímetros.</p>';
     c.setAttribute('data-ok','1');
     var el=c.querySelectorAll('svg *');
     for(var i=0;i<el.length;i++){
-      var s=el[i].style,cl=el[i].getAttribute('class');
-      if(el[i].tagName.toLowerCase()==='text'){
-        s.setProperty('fill','#e0990f','important');s.setProperty('stroke','none','important');
-        s.setProperty('font-size','11px','important');s.setProperty('font-weight','700','important');
+      var s=el[i].style,cl=el[i].getAttribute('class'),tg=el[i].tagName.toLowerCase();
+      function st(p,v){s.setProperty(p,v,'important')}
+      if(tg==='text'){
+        st('fill','#e0990f');st('stroke','none');st('font-size','11px');st('font-weight','700');
         el[i].setAttribute('text-anchor','middle');
-      }else{
-        s.setProperty('fill','none','important');
-        s.setProperty('stroke',cl==='arm'?'#15151a':'#e0990f','important');
-        s.setProperty('stroke-width',cl==='arm'?'5':'1.5','important');
-        s.setProperty('stroke-linecap','round','important');s.setProperty('stroke-linejoin','round','important');
+      }else if(cl==='cota'){
+        st('fill','none');st('stroke','#e0990f');st('stroke-width','1.5');
+      }else if(cl==='pat'){
+        st('fill','none');st('stroke','#15151a');st('stroke-width','7');st('stroke-linecap','round');st('stroke-linejoin','round');
+      }else if(cl==='marco'){
+        st('fill','#15151a');st('stroke','none');st('fill-rule','evenodd');el[i].setAttribute('fill-rule','evenodd');
+      }else if(cl==='lente'){
+        st('fill','#e9eef6');st('stroke','none');
+      }else if(cl==='remache'){
+        st('fill','#cfcfcf');st('stroke','none');
+      }else if(cl==='front'){
+        st('fill','#15151a');st('stroke','none');
       }
     }
   }
