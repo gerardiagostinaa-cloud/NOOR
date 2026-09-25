@@ -143,4 +143,45 @@ ready(function(){
   d.innerHTML='🎁 <b>PROMO 2x1:</b> llevás <b>2 lentes</b> por este precio';
   p.parentNode.insertBefore(d,p.nextSibling);
   });
+  /* 8) Cuadro de medidas del armazón */
+ready(function(){
+  var cajas=document.querySelectorAll('.noor-medidas');
+  for(var k=0;k<cajas.length;k++){
+    var c=cajas[k];
+    if(c.getAttribute('data-ok'))continue;
+    var m=c.textContent.split('|');
+    if(m.length<4)continue;
+    var F=m[0].trim(),C=m[1].trim(),P=m[2].trim(),T=m[3].trim();
+    function cel(t,v){return '<div class="noor-med-item"><span>'+t+'</span><strong>'+v+' mm</strong></div>'}
+    c.innerHTML='<p class="noor-med-tag">MEDIDAS DEL ARMAZÓN</p>'+
+      '<svg class="noor-med-svg" viewBox="0 0 320 150">'+
+        '<path class="arm" d="M30 45L140 45L135 105Q133 112 125 112L45 112Q37 112 35 105Z"/>'+
+        '<path class="arm" d="M180 45L290 45L285 105Q283 112 275 112L195 112Q187 112 185 105Z"/>'+
+        '<path class="arm" d="M140 55Q160 45 180 55"/>'+
+        '<path class="cota" d="M26 30H294M26 24V36M294 24V36"/>'+
+        '<path class="cota" d="M30 126H140M30 120V132M140 120V132"/>'+
+        '<path class="cota" d="M144 126H176M144 120V132M176 120V132"/>'+
+        '<text x="160" y="20">FRENTE '+F+'</text>'+
+        '<text x="85" y="146">CALIBRE '+C+'</text>'+
+        '<text x="160" y="146">'+P+'</text>'+
+      '</svg>'+
+      '<div class="noor-med-grid">'+cel('Frente',F)+cel('Calibre',C)+cel('Puente',P)+cel('Patilla',T)+'</div>'+
+      '<p class="noor-med-nota">Medidas en milímetros. Podés compararlas con las de un anteojo que ya uses: suelen estar grabadas en la parte interna de la patilla.</p>';
+    c.setAttribute('data-ok','1');
+    var el=c.querySelectorAll('svg *');
+    for(var i=0;i<el.length;i++){
+      var s=el[i].style,cl=el[i].getAttribute('class');
+      if(el[i].tagName.toLowerCase()==='text'){
+        s.setProperty('fill','#e0990f','important');s.setProperty('stroke','none','important');
+        s.setProperty('font-size','11px','important');s.setProperty('font-weight','700','important');
+        el[i].setAttribute('text-anchor','middle');
+      }else{
+        s.setProperty('fill','none','important');
+        s.setProperty('stroke',cl==='arm'?'#15151a':'#e0990f','important');
+        s.setProperty('stroke-width',cl==='arm'?'5':'1.5','important');
+        s.setProperty('stroke-linecap','round','important');s.setProperty('stroke-linejoin','round','important');
+      }
+    }
+  }
+});
 })();
