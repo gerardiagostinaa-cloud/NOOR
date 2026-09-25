@@ -185,7 +185,7 @@ ready(function(){
   }
 });
 
-/* 9) Banner principal con frase animada (v2) */
+/* 9) Banner principal con frase animada (v3) */
 ready(function(){
   if(document.querySelector('.noor-hero'))return;
   var IMG=encodeURI('https://d1a9qnv764bsoo.cloudfront.net/stores/007/899/679/rte/ChatGPT Image 25 sept 2026, 07_41_50 p.m..png');
@@ -200,7 +200,9 @@ ready(function(){
     }
     return top;}
   var sl=null;
-  var im=document.querySelector('img[src*="/slide-"],img[data-src*="/slide-"],img[data-srcset*="/slide-"]');
+  var hs=document.querySelector('.js-home-main-slider-container');
+  if(hs)sl=subir(hs)||hs;
+  var im=sl?null:document.querySelector('img.slide-img,img[src*="slide-"],img[data-srcset*="slide-"]');
   if(im)sl=subir(im)||im.closest('section');
   if(!sl){var b=document.querySelector('[data-store*="slider"],.js-home-slider,.home-slider,.section-slider');if(b)sl=subir(b)||b;}
   if(!sl){var sw=document.querySelector('.swiper-container,.swiper');if(sw)sl=subir(sw)||sw.closest('section')||sw;}
