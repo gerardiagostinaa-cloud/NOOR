@@ -185,21 +185,25 @@ ready(function(){
   }
 });
 
-/* 9) Banner principal con frase animada */
+/* 9) Banner principal con frase animada (v2) */
 ready(function(){
   if(document.querySelector('.noor-hero'))return;
   var IMG=encodeURI('https://d1a9qnv764bsoo.cloudfront.net/stores/007/899/679/rte/ChatGPT Image 25 sept 2026, 07_41_50 p.m..png');
   var FRASES=['el home office.','tus horas de estudio.','la ruta.','tus días de sol.','la pantalla y el sol.','cada momento del día.'];
   var LINK='/lentes-clip-on/';
+  if(!document.body.classList.contains('template-home'))return;
+  function subir(x){var el=x,top=null;
+    while(el&&el!==document.body){
+      var cn=(typeof el.className==='string'?el.className:'')+' '+((el.getAttribute&&el.getAttribute('data-store'))||'');
+      if(/slider/i.test(cn))top=el;
+      el=el.parentNode;
+    }
+    return top;}
+  var sl=null;
   var im=document.querySelector('img[src*="/slide-"],img[data-src*="/slide-"],img[data-srcset*="/slide-"]');
-  if(!im)return;
-  var el=im,sl=null;
-  while(el&&el!==document.body){
-    var cn=(typeof el.className==='string'?el.className:'')+' '+((el.getAttribute&&el.getAttribute('data-store'))||'');
-    if(/slider/i.test(cn))sl=el;
-    el=el.parentNode;
-  }
-  if(!sl)sl=im.closest('section');
+  if(im)sl=subir(im)||im.closest('section');
+  if(!sl){var b=document.querySelector('[data-store*="slider"],.js-home-slider,.home-slider,.section-slider');if(b)sl=subir(b)||b;}
+  if(!sl){var sw=document.querySelector('.swiper-container,.swiper');if(sw)sl=subir(sw)||sw.closest('section')||sw;}
   if(!sl)return;
   var h=document.createElement('div');h.className='noor-hero';
   h.innerHTML='<div class="noor-hero-bg" style="background-image:url(\''+IMG+'\')"></div><div class="noor-hero-shade"></div>'+
