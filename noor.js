@@ -119,4 +119,16 @@ ready(function(){setTimeout(function(){
     s.setProperty('fill','none','important');s.setProperty('stroke',t&&!o?'#15151a':'#e0990f','important');
     s.setProperty('stroke-width','1.8','important');s.setProperty('stroke-linecap','round','important');s.setProperty('stroke-linejoin','round','important')}
 },50)});
+/* 6) Inicio: ocultar sin stock y mostrar máximo 9 productos */
+ready(function(){
+  var h=document.querySelector('[data-store="home-products-featured"]');
+  if(!h)return;
+  var MAX=9;
+  var it=h.querySelectorAll('.js-item-product'),n=0;
+  for(var i=0;i<it.length;i++){
+    var s=it[i].querySelector('[data-store^="stock-product-"]');
+    var sin=s&&/-0$/.test(s.getAttribute('data-store'));
+    if(sin||n>=MAX){it[i].style.display='none'}else{n++}
+  }
+});  
 })();
