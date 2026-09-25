@@ -185,4 +185,45 @@ ready(function(){
   }
 });
 
+/* 9) Banner principal con frase animada */
+ready(function(){
+  if(document.querySelector('.noor-hero'))return;
+  var IMG=encodeURI('https://d1a9qnv764bsoo.cloudfront.net/stores/007/899/679/rte/ChatGPT Image 25 sept 2026, 07_41_50 p.m..png');
+  var FRASES=['el home office.','tus horas de estudio.','la ruta.','tus días de sol.','la pantalla y el sol.','cada momento del día.'];
+  var LINK='/lentes-clip-on/';
+  var im=document.querySelector('img[src*="/slide-"],img[data-src*="/slide-"],img[data-srcset*="/slide-"]');
+  if(!im)return;
+  var el=im,sl=null;
+  while(el&&el!==document.body){
+    var cn=(typeof el.className==='string'?el.className:'')+' '+((el.getAttribute&&el.getAttribute('data-store'))||'');
+    if(/slider/i.test(cn))sl=el;
+    el=el.parentNode;
+  }
+  if(!sl)sl=im.closest('section');
+  if(!sl)return;
+  var h=document.createElement('div');h.className='noor-hero';
+  h.innerHTML='<div class="noor-hero-bg" style="background-image:url(\''+IMG+'\')"></div><div class="noor-hero-shade"></div>'+
+    '<div class="noor-hero-txt">'+
+      '<p class="noor-hero-t1">ENFOCATE</p>'+
+      '<p class="noor-hero-t2">EN LO IMPORTANTE.</p>'+
+      '<p class="noor-hero-t3">Nosotros cuidamos <span>tu visión.</span></p>'+
+      '<p class="noor-hero-t4">Anteojos diseñados para <span class="noor-hero-w">'+FRASES[0]+'</span></p>'+
+      '<div class="noor-hero-cta"><span class="noor-hero-promo">HASTA <b>50%</b> OFF</span><a class="noor-hero-btn" href="'+LINK+'">Ver clipones →</a></div>'+
+    '</div>';
+  sl.parentNode.insertBefore(h,sl);
+  sl.style.setProperty('display','none','important');
+  var w=h.querySelector('.noor-hero-w'),i=0;
+  setInterval(function(){
+    w.classList.add('sale');
+    setTimeout(function(){
+      i=(i+1)%FRASES.length;
+      w.textContent=FRASES[i];
+      w.classList.remove('sale');
+      w.classList.add('entra');
+      void w.offsetWidth;
+      w.classList.remove('entra');
+    },350);
+  },2600);
+});
+
 })();
