@@ -231,5 +231,88 @@ ready(function(){
     },350);
   },2600);
 });
+/* 10) Tarjeta de oferta animada sobre el botón de compra
+   Se activa con <div class="noor-oferta" style="display:none">Título|Subtítulo|Regalo</div> en la descripción */
+ready(function(){
+  var cfg=document.querySelector('.noor-oferta');
+  if(!cfg||document.querySelector('.noor-deal'))return;
+  var btn=document.querySelector('.js-addtocart:not(.js-addtocart-placeholder)')||document.querySelector('#product_form [type="submit"]');
+  if(!btn)return;
+  var p=cfg.textContent.split('|');
+  var tit=(p[0]||'').trim(),sub=(p[1]||'').trim(),reg=(p[2]||'').trim();
+  cfg.parentNode.removeChild(cfg);
 
+  var css=
+  '.noor-deal{position:relative;margin:0 0 14px;border:2px solid #e0990f;border-radius:14px;background:#fffaf0;overflow:hidden;opacity:0;font-family:inherit}'+
+  '.noor-deal.noor-in{animation:noorDealIn .7s cubic-bezier(.2,.9,.3,1.2) forwards}'+
+  '.noor-deal:after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);pointer-events:none}'+
+  '.noor-deal.noor-in:after{animation:noorSheen 1.1s .7s ease-out}'+
+  '.noor-deal-main{display:flex;align-items:center;gap:12px;padding:16px}'+
+  '.noor-deal-dot{flex:0 0 22px;height:22px;border-radius:50%;border:2px solid #e0990f;display:flex;align-items:center;justify-content:center;animation:noorDot 2.4s 1.5s infinite}'+
+  '.noor-deal-dot:before{content:"";width:12px;height:12px;border-radius:50%;background:#e0990f}'+
+  '.noor-deal-info{flex:1;min-width:0}'+
+  '.noor-deal-tit{margin:0;font-weight:800;font-size:16px;color:#111;line-height:1.25}'+
+  '.noor-deal-sub{margin:4px 0 0;font-size:13px;color:#555}'+
+  '.noor-deal-prices{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}'+
+  '.noor-deal-off{background:#111;color:#e0990f;font-size:11px;font-weight:800;padding:3px 8px;border-radius:20px;letter-spacing:.5px}'+
+  '.noor-deal-price{font-size:21px;font-weight:800;color:#111}'+
+  '.noor-deal-old{font-size:13px;color:#999}'+
+  '.noor-deal-extra{background:#f6ead2;border-top:1px solid #ecd9b0;padding:10px 16px}'+
+  '.noor-deal-line{margin:3px 0;font-size:13px;color:#333;display:flex;align-items:center;gap:8px}'+
+  '.noor-deal-line b{color:#111}'+
+  '.noor-deal-ic{flex:0 0 18px;height:18px;border-radius:5px;background:#e0990f;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}'+
+  '.noor-deal-free{margin-left:auto;background:#e0990f;color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px}'+
+  '.noor-nudge{animation:noorNudge .9s ease}'+
+  '@keyframes noorDealIn{0%{opacity:0;transform:translateY(18px) scale(.97)}60%{opacity:1;transform:translateY(-4px) scale(1.01)}100%{opacity:1;transform:none}}'+
+  '@keyframes noorSheen{to{left:130%}}'+
+  '@keyframes noorDot{0%,100%{box-shadow:0 0 0 0 rgba(224,153,15,.45)}50%{box-shadow:0 0 0 7px rgba(224,153,15,0)}}'+
+  '@keyframes noorNudge{0%,100%{transform:none}20%{transform:translateY(-3px) scale(1.02)}40%{transform:none}60%{transform:translateY(-2px)}}'+
+  '@media (max-width:480px){.noor-deal-tit{font-size:15px}.noor-deal-price{font-size:19px}}'+
+  '@media (prefers-reduced-motion:reduce){.noor-deal,.noor-deal.noor-in{animation:none;opacity:1}.noor-deal:after,.noor-deal-dot,.noor-nudge{animation:none}}';
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+
+  var d=document.createElement('div');d.className='noor-deal';
+  d.innerHTML=
+    '<div class="noor-deal-main"><span class="noor-deal-dot"></span>'+
+    '<div class="noor-deal-info"><p class="noor-deal-tit"></p><p class="noor-deal-sub"></p></div>'+
+    '<div class="noor-deal-prices"><span class="noor-deal-off"></span><strong class="noor-deal-price"></strong><s class="noor-deal-old"></s></div></div>'+
+    '<div class="noor-deal-extra">'+
+    '<p class="noor-deal-line noor-deal-reg"><span class="noor-deal-ic">✓</span><span class="noor-deal-regtx"></span><span class="noor-deal-free">GRATIS</span></p>'+
+    '<p class="noor-deal-line noor-deal-pay"><span class="noor-deal-ic">$</span><span class="noor-deal-paytx"></span></p>'+
+    '<p class="noor-deal-line"><span class="noor-deal-ic">➜</span><span class="noor-deal-ship"></span></p></div>';
+  var q=function(s){return d.querySelector(s)};
+  q('.noor-deal-tit').textContent=tit;
+  q('.noor-deal-sub').textContent=sub;
+  if(reg)q('.noor-deal-regtx').textContent=reg;else q('.noor-deal-reg').style.display='none';
+
+  var pe=document.querySelector('#price_display, .js-price-display');
+  var ce=document.querySelector('#compare_price_display, .js-compare-price-display');
+  function num(el){if(!el)return 0;var t=(el.textContent||'').replace(/[^\d,]/g,'').replace(',','.');return parseFloat(t)||0}
+  function fmt(n){return '$'+Math.round(n).toLocaleString('es-AR')}
+  function upd(){
+    var pr=num(pe),old=num(ce);
+    if(!pr){d.style.display='none';return}
+    d.style.display='';
+    q('.noor-deal-price').textContent=fmt(pr);
+    if(old>pr){q('.noor-deal-old').textContent=fmt(old);q('.noor-deal-off').textContent=Math.round((1-pr/old)*100)+'% OFF';q('.noor-deal-old').style.display='';q('.noor-deal-off').style.display=''}
+    else{q('.noor-deal-old').style.display='none';q('.noor-deal-off').style.display='none'}
+    q('.noor-deal-paytx').innerHTML='3 cuotas sin interés de <b>'+fmt(pr/3)+'</b> · <b>'+fmt(pr*0.9)+'</b> por transferencia';
+  }
+  function habil(n){var x=new Date(),c=0;while(c<n){x.setDate(x.getDate()+1);var w=x.getDay();if(w>0&&w<6)c++}return x}
+  var o={weekday:'short',day:'numeric',month:'short'};
+  q('.noor-deal-ship').innerHTML='Envío gratis · llega aprox. entre el <b>'+habil(4).toLocaleDateString('es-AR',o)+'</b> y el <b>'+habil(7).toLocaleDateString('es-AR',o)+'</b>';
+  upd();
+  if(pe&&window.MutationObserver)new MutationObserver(upd).observe(pe,{childList:true,subtree:true,characterData:true});
+
+  var t=btn.closest('.form-row')||btn;
+  t.parentNode.insertBefore(d,t);
+
+  if(window.IntersectionObserver){
+    var io=new IntersectionObserver(function(e){if(e[0].isIntersecting){d.classList.add('noor-in');io.disconnect()}},{threshold:.3});
+    io.observe(d);
+  }else d.classList.add('noor-in');
+
+  var usado=false;btn.addEventListener('click',function(){usado=true});
+  setInterval(function(){if(usado||document.hidden)return;btn.classList.add('noor-nudge');setTimeout(function(){btn.classList.remove('noor-nudge')},900)},7000);
+});
 })();
