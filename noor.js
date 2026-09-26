@@ -36,7 +36,8 @@ if(location.pathname.indexOf('checkout')<0)ready(function(){
   document.body.appendChild(b);
   var i=0,off=false,q=function(s){return b.querySelector(s)};
   function hace(f){var d=Math.floor((Date.now()-new Date(f+'T12:00:00'))/864e5);return d<=0?'Hoy':d===1?'Ayer':'Hace '+d+' días'}
-  function ver(){if(off)return;var v=ventas[i];
+  function tapa(){var h=document.querySelector('.noor-hero,.js-home-main-slider-container');if(!h)return false;var r=h.getBoundingClientRect();return r.bottom>90&&r.top<window.innerHeight}
+  function ver(){if(off)return;if(tapa()){setTimeout(ver,1500);return}var v=ventas[i];
     q('.noor-toast-icon').textContent=v[0].charAt(0).toUpperCase();
     q('.noor-toast-title').textContent=v[0]+' de '+v[1];
     q('.noor-toast-text').textContent='Compró '+v[2];
@@ -306,6 +307,8 @@ ready(function(){
 
   var t=btn.closest('.form-row')||btn;
   t.parentNode.insertBefore(d,t);
+  /* En compu, la columna de compra fija (sticky) del tema se montaba sobre las reseñas y preguntas: la dejamos quieta */
+  for(var an=d.parentNode;an&&an!==document.body;an=an.parentNode){if(getComputedStyle(an).position==='sticky'){an.style.setProperty('position','relative','important');an.style.setProperty('top','auto','important')}}
 
   if(window.IntersectionObserver){
     var io=new IntersectionObserver(function(e){if(e[0].isIntersecting){d.classList.add('noor-in');io.disconnect()}},{threshold:.3});
