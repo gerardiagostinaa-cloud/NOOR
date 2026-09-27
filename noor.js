@@ -328,9 +328,12 @@ ready(function(){
   var sc=document.querySelector('script[src*="/NOOR@"]');
   var base=sc?sc.src.replace(/NOOR@[^\/]+\/.*$/,'NOOR@main/'):'';
   function url(f){f=(f||'').trim();return /^https?:/.test(f)?f:base+f}
-  var items=[];
+  var items=[],vistos={};
   for(var k=0;k<cfgs.length;k++){
     var p=cfgs[k].textContent.split('|');
+    // El tema a veces repite la descripción (versión celu y compu): salteamos las comparaciones repetidas
+    var clave=(p[0]||'').trim()+'|'+(p[1]||'').trim();
+    if(vistos[clave])continue;vistos[clave]=1;
     if(p.length>=2)items.push({a:url(p[0]),b:url(p[1]),la:(p[2]||'Antes').trim(),lb:(p[3]||'Después').trim(),t:(p[4]||'Antes y después').trim(),tab:(p[5]||p[3]||'Opción '+(k+1)).trim()});
   }
   if(!items.length)return;
