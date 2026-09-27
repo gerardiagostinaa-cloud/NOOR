@@ -243,6 +243,18 @@ ready(function(){
   var tit=(p[0]||'').trim(),sub=(p[1]||'').trim(),reg=(p[2]||'').trim();
   // En promos 2x1 el descuento por transferencia no se suma: no lo mostramos
   var sinTransf=/2x1/i.test(cfg.textContent)||/sin.?transf/i.test(p[3]||'');
+  // En productos 2x1 también ocultamos la leyenda del tema "X% de descuento pagando con Transferencia"
+  function ocultarTransf(){
+    var re=/descuento\s+pagando\s+con\s+transferencia/i,els=document.querySelectorAll('body *');
+    for(var i=0;i<els.length;i++){
+      var e=els[i];
+      if(e.closest&&e.closest('.noor-deal'))continue;
+      if(!re.test(e.textContent||''))continue;
+      var hijo=false;for(var j=0;j<e.children.length;j++){if(re.test(e.children[j].textContent||'')){hijo=true;break}}
+      if(!hijo)e.style.setProperty('display','none','important');
+    }
+  }
+  if(sinTransf){ocultarTransf();setTimeout(ocultarTransf,1200);setTimeout(ocultarTransf,3000)}
   cfg.parentNode.removeChild(cfg);
 
   var css=
