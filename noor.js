@@ -241,6 +241,8 @@ ready(function(){
   if(!btn)return;
   var p=cfg.textContent.split('|');
   var tit=(p[0]||'').trim(),sub=(p[1]||'').trim(),reg=(p[2]||'').trim();
+  // En promos 2x1 el descuento por transferencia no se suma: no lo mostramos
+  var sinTransf=/2x1/i.test(cfg.textContent)||/sin.?transf/i.test(p[3]||'');
   cfg.parentNode.removeChild(cfg);
 
   var css=
@@ -297,11 +299,11 @@ ready(function(){
     q('.noor-deal-price').textContent=fmt(pr);
     if(old>pr){q('.noor-deal-old').textContent=fmt(old);q('.noor-deal-off').textContent=Math.round((1-pr/old)*100)+'% OFF';q('.noor-deal-old').style.display='';q('.noor-deal-off').style.display=''}
     else{q('.noor-deal-old').style.display='none';q('.noor-deal-off').style.display='none'}
-    q('.noor-deal-paytx').innerHTML='3 cuotas sin interés de <b>'+fmt(pr/3)+'</b> · <b>'+fmt(pr*0.9)+'</b> por transferencia';
+    q('.noor-deal-paytx').innerHTML='3 cuotas sin interés de <b>'+fmt(pr/3)+'</b>'+(sinTransf?'':' · <b>'+fmt(pr*0.9)+'</b> por transferencia');
   }
   function habil(n){var x=new Date(),c=0;while(c<n){x.setDate(x.getDate()+1);var w=x.getDay();if(w>0&&w<6)c++}return x}
   var o={weekday:'short',day:'numeric',month:'short'};
-  q('.noor-deal-ship').innerHTML='Envío gratis · llega aprox. entre el <b>'+habil(4).toLocaleDateString('es-AR',o)+'</b> y el <b>'+habil(7).toLocaleDateString('es-AR',o)+'</b>';
+  q('.noor-deal-ship').innerHTML='Envío gratis · llega aprox. entre el <b>'+habil(3).toLocaleDateString('es-AR',o)+'</b> y el <b>'+habil(6).toLocaleDateString('es-AR',o)+'</b>';
   upd();
   if(pe&&window.MutationObserver)new MutationObserver(upd).observe(pe,{childList:true,subtree:true,characterData:true});
 
