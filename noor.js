@@ -140,8 +140,11 @@ ready(function(){
   for(var k=0;k<cajas.length;k++){
     var c=cajas[k];
     if(c.getAttribute('data-ok'))continue;
-    var m=c.textContent.split('|');
-    if(m.length<4)continue;
+    // Admite varios armazones separados por ";" -> F|C|P|T|Nombre;F|C|P|T|Nombre
+    var sets=[],cr=c.textContent.split(';');
+    for(var z=0;z<cr.length;z++){var mm=cr[z].split('|');if(mm.length>=4)sets.push(mm)}
+    if(!sets.length)continue;
+    var m=sets[0];
     var F=m[0].trim(),C=m[1].trim(),P=m[2].trim(),T=m[3].trim();
     function col(ic,v,t,d){return '<div class="noor-anat-col"><svg viewBox="0 0 60 40">'+ic+'</svg><strong>'+v+' mm</strong><span>'+t+'</span><small>'+d+'</small></div>'}
     var icL='<path class="osc" d="M8 6C20 5 40 5 52 7C51 18 49 26 46 30C44 33 40 34 30 34C18 34 14 33 12 30C9 25 8 17 8 6Z"/><path class="oro" d="M13 20H47M13 20L17 17M13 20L17 23M47 20L43 17M47 20L43 23"/>';
@@ -164,6 +167,24 @@ ready(function(){
       '</div>'+
       '<p class="noor-anat-frente">Ancho total del frente: <b>'+F+' mm</b></p>'+
       '<p class="noor-med-nota">Anteojos <b>unisex</b>. Son medidas estándar, pensadas para adaptarse cómodamente a la mayoría de los rostros. Si ya tenés un anteojo que te queda bien, podés comparar sus medidas con estas. Todas las medidas están en milímetros.</p>';
+    if(sets.length>1){
+      var qs=function(x){var e=c.querySelector(x);if(e)e.parentNode.removeChild(e)};
+      qs('.noor-anat-code');qs('.noor-anat-grid');qs('.noor-anat-frente');
+      var td='padding:10px 6px;border-top:1px solid #ececec;text-align:center;font-size:14px;color:#15151a;';
+      var th='padding:8px 6px;text-align:center;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#e0990f;';
+      var filas=[['Ancho del lente',1],['Ancho del puente',2],['Largo de la patilla',3],['Ancho total del frente',0]];
+      var h='<div style="overflow-x:auto;margin:14px 0 0;"><table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;"><tr><th style="'+th+'"></th>';
+      for(var y=0;y<sets.length;y++)h+='<th style="'+th+'">'+((sets[y][4]||('Modelo '+(y+1))).trim())+'</th>';
+      h+='</tr>';
+      for(var r=0;r<filas.length;r++){
+        h+='<tr><td style="'+td+'text-align:left;font-size:12px;font-weight:700;color:#555;">'+filas[r][0]+'</td>';
+        for(var y2=0;y2<sets.length;y2++)h+='<td style="'+td+'font-weight:800;">'+sets[y2][filas[r][1]].trim()+' mm</td>';
+        h+='</tr>';
+      }
+      h+='</table></div>';
+      var nota=c.querySelector('.noor-med-nota'),w=document.createElement('div');w.innerHTML=h;
+      if(nota)c.insertBefore(w.firstChild,nota);else c.appendChild(w.firstChild);
+    }
     c.setAttribute('data-ok','1');
     var el=c.querySelectorAll('svg *');
     for(var i=0;i<el.length;i++){
