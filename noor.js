@@ -318,4 +318,87 @@ ready(function(){
   var usado=false;btn.addEventListener('click',function(){usado=true});
   setInterval(function(){if(usado||document.hidden)return;btn.classList.add('noor-nudge');setTimeout(function(){btn.classList.remove('noor-nudge')},900)},7000);
 });
+/* 11) Antes y después deslizable (con pestañas si hay más de uno)
+   Cada comparación se activa con una línea en la descripción:
+   <div class="noor-ad" style="display:none">antes.jpg|despues.jpg|Etiqueta antes|Etiqueta después|Título|Pestaña</div>
+   Las imágenes se suben a la raíz del repositorio de GitHub (rama main), no hace falta crear release para sumarlas */
+ready(function(){
+  var cfgs=document.querySelectorAll('.noor-ad');
+  if(!cfgs.length||document.querySelector('.noor-ad-box'))return;
+  var sc=document.querySelector('script[src*="/NOOR@"]');
+  var base=sc?sc.src.replace(/NOOR@[^\/]+\/.*$/,'NOOR@main/'):'';
+  function url(f){f=(f||'').trim();return /^https?:/.test(f)?f:base+f}
+  var items=[];
+  for(var k=0;k<cfgs.length;k++){
+    var p=cfgs[k].textContent.split('|');
+    if(p.length>=2)items.push({a:url(p[0]),b:url(p[1]),la:(p[2]||'Antes').trim(),lb:(p[3]||'Después').trim(),t:(p[4]||'Antes y después').trim(),tab:(p[5]||p[3]||'Opción '+(k+1)).trim()});
+  }
+  if(!items.length)return;
+  var css=
+  '.noor-ad-box{max-width:900px;margin:40px auto;padding:0 16px;text-align:center}'+
+  '.noor-ad-tag{margin:0;color:#e0990f;font-size:12px;font-weight:700;letter-spacing:2px}'+
+  '.noor-ad-title{margin:6px 0 4px;font-size:26px;font-weight:800;color:#111;line-height:1.2}'+
+  '.noor-ad-sub{margin:0 0 16px;font-size:14px;color:#666}'+
+  '.noor-ad-tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 14px}'+
+  '.noor-ad-tabs button{font:inherit;font-size:13px;font-weight:700;padding:9px 14px;border-radius:30px;border:1.5px solid #e0990f;background:#fff;color:#111;cursor:pointer}'+
+  '.noor-ad-tabs button[aria-selected="true"]{background:#111;color:#e0990f;border-color:#111}'+
+  '.noor-ad-tabs button:focus-visible{outline:3px solid #e0990f;outline-offset:2px}'+
+  '.noor-ad-view{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;border:2px solid #e0990f;background:#ddd;user-select:none}'+
+  '.noor-ad-view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}'+
+  '.noor-ad-lab{position:absolute;top:12px;font-size:12px;font-weight:700;padding:6px 11px;border-radius:20px;pointer-events:none}'+
+  '.noor-ad-lab.l{left:12px;background:rgba(255,255,255,.9);color:#111}'+
+  '.noor-ad-lab.r{right:12px;background:#e0990f;color:#111}'+
+  '.noor-ad-line{position:absolute;top:0;bottom:0;width:3px;margin-left:-1.5px;background:#fff;box-shadow:0 0 8px rgba(0,0,0,.35);pointer-events:none}'+
+  '.noor-ad-knob{position:absolute;top:50%;left:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:#111;border:3px solid #e0990f;color:#e0990f;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}'+
+  '.noor-ad-view input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;-webkit-appearance:none;appearance:none}'+
+  '.noor-ad-view:focus-within .noor-ad-knob{outline:3px solid #fff;outline-offset:2px}'+
+  '.noor-ad-note{margin:10px 0 0;font-size:12px;color:#888}'+
+  '@media (max-width:480px){.noor-ad-title{font-size:21px}.noor-ad-tabs button{font-size:12px;padding:8px 11px}.noor-ad-knob{width:40px;height:40px;margin:-20px 0 0 -20px;font-size:16px}.noor-ad-lab{font-size:11px;top:9px}}';
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+
+  var box=document.createElement('section');box.className='noor-ad-box';
+  box.innerHTML=
+    '<p class="noor-ad-tag">MIRÁ LA DIFERENCIA</p><p class="noor-ad-title"></p><p class="noor-ad-sub">Deslizá para comparar</p>'+
+    '<div class="noor-ad-tabs" role="tablist"></div>'+
+    '<div class="noor-ad-view"><img class="noor-ad-after" loading="lazy" width="1200" height="900" alt=""><img class="noor-ad-before" loading="lazy" width="1200" height="900" alt="">'+
+    '<span class="noor-ad-lab l"></span><span class="noor-ad-lab r"></span>'+
+    '<div class="noor-ad-line"><span class="noor-ad-knob">‹›</span></div>'+
+    '<input type="range" min="0" max="100" value="50" step="1" aria-label="Deslizá para comparar antes y después"></div>'+
+    '<p class="noor-ad-note">Imágenes ilustrativas.</p>';
+  var q=function(s){return box.querySelector(s)};
+  var bef=q('.noor-ad-before'),aft=q('.noor-ad-after'),line=q('.noor-ad-line'),rng=q('input'),tabs=q('.noor-ad-tabs');
+  function set(v){bef.style.clipPath='inset(0 '+(100-v)+'% 0 0)';bef.style.webkitClipPath=bef.style.clipPath;line.style.left=v+'%'}
+  function show(i){
+    var it=items[i];
+    bef.src=it.a;bef.alt=it.la;aft.src=it.b;aft.alt=it.lb;
+    q('.noor-ad-lab.l').textContent=it.la;q('.noor-ad-lab.r').textContent=it.lb;
+    q('.noor-ad-title').textContent=it.t;
+    var bs=tabs.querySelectorAll('button');for(var j=0;j<bs.length;j++)bs[j].setAttribute('aria-selected',j===i?'true':'false');
+    rng.value=50;set(50);
+  }
+  if(items.length>1){
+    items.forEach(function(it,i){var b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.textContent=it.tab;b.onclick=function(){show(i)};tabs.appendChild(b)});
+  }else tabs.style.display='none';
+  show(0);
+  var tocado=false;
+  rng.addEventListener('input',function(){tocado=true;set(rng.value)});
+
+  var full=document.querySelector('.noor-reviews-full');
+  if(full)full.insertBefore(box,full.firstChild);else cfgs[0].parentNode.insertBefore(box,cfgs[0]);
+  for(var r=0;r<cfgs.length;r++)if(cfgs[r].parentNode)cfgs[r].parentNode.removeChild(cfgs[r]);
+
+  // Pequeña demostración del movimiento la primera vez que se ve (salvo "reducir movimiento")
+  var quieto=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!quieto&&window.IntersectionObserver){
+    var io=new IntersectionObserver(function(e){
+      if(!e[0].isIntersecting)return;io.disconnect();
+      var pts=[50,22,78,50],t0=null,dur=1800;
+      function paso(t){if(tocado)return;if(!t0)t0=t;var f=Math.min((t-t0)/dur,1),seg=f*3,i=Math.min(Math.floor(seg),2),x=seg-i,ease=x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+        var v=pts[i]+(pts[i+1]-pts[i])*ease;set(v);rng.value=v;if(f<1)requestAnimationFrame(paso)}
+      setTimeout(function(){requestAnimationFrame(paso)},400);
+    },{threshold:.5});
+    io.observe(box);
+  }
+});
+
 })();
